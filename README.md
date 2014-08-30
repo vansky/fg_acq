@@ -4,18 +4,18 @@ This program attempts to computationally model the acquisition of filler-gap con
 
 This code was deesigned for research rather than general use, so there are some things that should be generalized at some point...
 
-Requirements
-  CHILDES (and BabySRL annotations), 
+Requirements  
+  CHILDES (and BabySRL annotations)  
   megam
   
   python packages:
-    ast, 
-    nltk, 
-    numpy, 
+    ast  
+    nltk   
+    numpy  
     scipy
 
 Edits
-  Before running the code, you'll need to update scripts/buildChunker.py and scripts/chunkCHILDES.py
+  Before running the code, you'll need to update scripts/buildChunker.py and scripts/chunkCHILDES.py  
     Replace '/home/compling/megam' with your location for megam
     
   scripts/acquireFG.py has a bunch of flags with descriptive comments at the beginning that need to be set in order to ensure the model learns what you want it to learn.
