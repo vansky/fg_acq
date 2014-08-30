@@ -7,7 +7,7 @@ This code was deesigned for research rather than general use, so there are some 
   CHILDES (and BabySRL annotations)  
   megam
   
-  #### Python packages:  
+#### Python packages:  
     ast  
     nltk   
     numpy  
@@ -18,8 +18,6 @@ This code was deesigned for research rather than general use, so there are some 
     Replace '/home/compling/megam' with your location for megam
     
   scripts/acquireFG.py has a bunch of flags with descriptive comments at the beginning that need to be set in order to ensure the model learns what you want it to learn.
-  
-    
 
 ## References
 
