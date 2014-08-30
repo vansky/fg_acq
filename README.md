@@ -5,13 +5,13 @@ This program attempts to computationally model the acquisition of filler-gap con
 This code was deesigned for research rather than general use, so there are some things that should be generalized at some point...
 
 Requirements
-  CHILDES (and BabySRL annotations)
+  CHILDES (and BabySRL annotations), 
   megam
   
   python packages:
-    ast
-    nltk
-    numpy
+    ast, 
+    nltk, 
+    numpy, 
     scipy
 
 Edits
