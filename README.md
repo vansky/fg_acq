@@ -1,7 +1,9 @@
 # fg_acq  
 This program attempts to computationally model the acquisition of filler-gap constructions as observed by Seidl et al (2003) and by Gagliardi et al (2014). This software was initially presented in van Schijndel and Elsner (2014).
 
-This code was deesigned for research rather than general use, so there are some things that should be generalized at some point...
+This code was designed for research rather than general use, so there are some things that should be generalized at some point...
+
+In fact, not enough has been automated yet for non-devs to really run this code, but I'm working on it. If you would like to run this code, shoot me an email, and I can get you the files that aren't yet baked into the automation process.
 
 ## Requirements  
   CHILDES (and BabySRL annotations)  
