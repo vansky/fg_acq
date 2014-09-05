@@ -16,13 +16,17 @@ import string
 #import cProfile, pstats,StringIO
 import ast
 
+COLLAPSE_OBJ = False
+if sys.argv[1][0] == '-':
+  if sys.argv[1][1:] == 'collapsed':
+    COLLAPSE_OBJ = True
+    
 THET = False
 wfuncwords = ['who','what','which']
 if THET:
   tfuncwords = ['thet']
 else:
   tfuncwords = ['that']
-COLLAPSE_OBJ = True
 
 def parseLine(line):
   #sys.stderr.write(str(line)+'\n')

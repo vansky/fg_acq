@@ -1,4 +1,4 @@
-#python acquireFG.py trainFile modelFile > outputFile
+#python acquireFG.py --input trainFile --model modelFile > outputFile
 
 #trainFile: NP-chunked sentences
 #outputFile: an empty file to store the model's interpretation of trainFile
@@ -19,29 +19,54 @@ from model import Model, CondModel
 import math
 import cProfile, pstats,StringIO
 
+OPTS = {}
+for aix in range(1,len(sys.argv)):
+  if len(sys.argv[aix]) < 2 or sys.argv[aix][:2] != '--':
+    #filename or malformed arg
+    continue
+  elif aix < len(sys.argv) - 1 and len(sys.argv[aix+1]) > 2 and sys.argv[aix+1][:2] == '--':
+    #missing filename
+    OPTS[sys.argv[aix][2:]] = True
+    continue
+  else:
+    OPTS[sys.argv[aix][2:]] = sys.argv[aix+1]
+
 #########################
 #
 # Definitions
 #
 #########################
 
-THET = False #use 'thet' as a functional 'that'
 PROGRESS = False #displays incremental progress made by model (via sampling)
 DIST_PRIORS = True #places priority on using low categories until high cats become established
+if 'nopriors' in OPTS:
+  DIST_PRIORS = False
 PRIOR_BIAS = 1000 # magnitude of bias towards using low categories [1-1000]
 LATENT_POSITIONS = False #treats arg locations as latent; otherwise, arg locations are chunk locations
-FUNC = False #includes function words in analysis
+
+wfuncwords = ['which','who','what'] #What does the model consider function words?
+FUNC = False #includes function words in analysis; if True, make gaussians for the function words
 WH = True #Should Wh relativizers be tracked?
 THAT = True #Should That relativizers be tracked?
-SUBJ_EXTRACT = True #allows subjects to extract; otherwise, there is only one subject gaussian
-OBJ_EXTRACT = True #allows objects to extract; otherwise, there is only one object gaussian
+THET = False #use 'thet' as a functional 'that'
+
+SUBJ_EXTRACT = False 
+if 'extract-subj' in OPTS:
+  SUBJ_EXTRACT = True #allows subjects to extract; otherwise, there is only one subject gaussian
+OBJ_EXTRACT = False 
+if 'extract-obj' in OPTS:
+  OBJ_EXTRACT = True #allows objects to extract; otherwise, there is only one object gaussian 
 IOBJ = False #assumes learners already have an indirect object distribution
 IOBJ_EXTRACT = False #allows learners to extract IOBJ
+
 PARAMSEARCH = False #explores the parameter space; SLOW!
 TIMING = False #Gives detailed timing outputs to permit optimizing
-variable_var = True#.5#'v' #The std dev for the model Gaussians; 'v' leads to variable, learned deviance
+variable_var = True #.5#'v' #The std dev for the model Gaussians; 'v' leads to variable, learned deviance
+
 runIters = 20 #max number of iterations
-wfuncwords = ['which','who','what'] #What does the model consider function words?
+if 'iters' in OPTS:
+  runIters = int(OPTS['iters'])
+
 
 if THAT:
   if THET:
@@ -542,7 +567,7 @@ SEENV = False #a boolean denoting whether the verb has been seen or not
               #this is an oversimplification since only the first verb will trigger this
 
 foundFlag = False
-trainFile = open(sys.argv[1],'r')
+trainFile = open(OPTS['input'],'r')
 #trainFile = (N;The boy)(X;quickly)(V;called)(N;the cops)
 
 #N:-2:I V::want N:-1:you V:0:to go N:1:home
@@ -663,7 +688,7 @@ if not PARAMSEARCH:
 
 sys.stderr.write('Outputting inferred model\n')
 
-modelFile = open(sys.argv[2],'wb')
+modelFile = open(OPTS['model'],'wb')
 
 model = {}
 model['A'] = A
