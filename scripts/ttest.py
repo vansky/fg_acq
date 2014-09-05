@@ -1,10 +1,10 @@
 
 #python ttest.py file1 file2
 from __future__ import division
+import ast
 import scipy.stats
 import numpy
 import sys
-import ast
 
 comparevector = {'Tot':[[],[]],'That':[[],[]],'S':[[],[]],'O':[[],[]],'Wh':[[],[]]}
 #comparevector = {'Tot':[[],[]]}

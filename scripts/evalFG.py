@@ -5,15 +5,7 @@
 
 from __future__ import division
 import sys
-#import numpy
-#from scipy.stats import truncnorm, norm
 import string
-#import time
-#import pickle
-#import itertools
-#from model import Model, CondModel
-#import math
-#import cProfile, pstats,StringIO
 import ast
 
 COLLAPSE_OBJ = False
@@ -82,8 +74,6 @@ for line in testFile.readlines():
     testSent.append(w)
   testCorpus.append(testSent)
 testFile.close()
-
-#sys.stderr.write(str(testCorpus[0])+'\n')
 
 #########################
 #
