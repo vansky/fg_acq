@@ -2,7 +2,6 @@
 import sys
 import nltk
 import pickle
-import ast
 from nltk.chunk.util import conlltags2tree
 
 nltk.config_megam('/home/compling/megam/')
