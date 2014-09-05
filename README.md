@@ -1,5 +1,5 @@
 # fg_acq  
-This program attempts to computationally model the acquisition of filler-gap constructions as observed by *Seidl et al (2003)* and by *Gagliardi et al (2014)*. This software was initially presented in *van Schijndel and Elsner (2014)*.
+This program attempts to computationally model the acquisition of filler-gap constructions as observed by Seidl et al (2003) and by Gagliardi et al (2014). This software was initially presented in van Schijndel and Elsner (2014).
 
 This code was designed for research rather than general use, so there are some things that should be generalized at some point...
 
@@ -16,7 +16,7 @@ This code was designed for research rather than general use, so there are some t
   Before running the code, you'll need to update `scripts/buildChunker.py` and `scripts/chunkCHILDES.py`  
     Replace '/home/compling/megam' with your location for megam
   
-  If you just want to replicate the results of *van Schijndel and Elsner (2014)*, just run: `make acl2014`  
+  If you just want to replicate the results of van Schijndel and Elsner (2014), just run: `make acl2014`  
   
   `scripts/acquireFG.py` has a bunch of commented flags at the beginning that can be tweaked to alter what the model learns.
   
