@@ -111,34 +111,28 @@ genmodel/sarah.srl.cha: user-babysrl-location.txt $(shell cat user-babysrl-locat
 	cat $(word 2,$^)/* > $@
 
 .PRECIOUS: %.sents
-#foo/eve.sents
+#eve.sents
 %.sents: %.srl.cha scripts/getSents.py
 	python $(word 2,$^) $< | perl -pe "s/[\(\)\/]//g;s/\[\?\]//g;s/[<>\[\]]//g;s/[\"\#\+_]/ /g;s/@[coltb]//g;s/@wp//g;s/ [ ]*/ /g;" > $@
 
 .PRECIOUS: %.eval.sents
-#genmodel/eve.eval.sents
+#eve.eval.sents
 %.eval.sents: %.srl.cha scripts/buildSRLEval.py
 	python $(word 2,$^) $< | perl -pe "s/m :/m/g;s/o : h/oh/g;" > $@
 
 .PRECIOUS: %.fullfg.eval.sents
-#genmodel/eve.fullfg.eval.sents
-#foo/eve.fullfg.eval.sents
+#eve.fullfg.eval.sents
 %.fullfg.eval.sents: %.eval.sents
 	#egrep "(1'\) [a-zA-Z\(][^V]*V)|(0'\) [a-zA-Z])" $< > $@
 	egrep "(1'\) [^V]*V)|(0'\) [a-zA-Z])" $< > $@
 
-srlsents: genmodel/eve.sents genmodel/eve.eval.sents genmodel/eve.fullfg.eval.sents genmodel/adam.sents genmodel/adam.eval.sents genmodel/adam.fullfg.eval.sents
-
-%/srltests: %/eve.evalled %/eve.fullfg.eval.evalled %/adam.evalled %/adam.fullfg.eval.evalled
-
 .PRECIOUS: genmodel/chunker
-#genmodel/chunker
 genmodel/chunker: scripts/buildChunker.py
 	python $< $@
 
 .PRECIOUS: %.chunked
-#foo/eve.chunked
-#foo/eve.fullfg.eval.chunked
+#eve.chunked
+#eve.fullfg.eval.chunked
 %.chunked: %.sents scripts/chunkCHILDES.py genmodel/chunker
 	python $(word 2,$^) $< $(word 3,$^) | tail -n +2 | perl -pe "s/\(NP yes\/NNS\)/yes\/OH/g;" > $@
 
@@ -147,8 +141,8 @@ genmodel/chunker: scripts/buildChunker.py
 #	python $(word 2,$^) $< > $@
 
 .PRECIOUS: %.munged
-#foo/eve.munged
-#foo/eve.fullfg.eval.munged
+#eve.munged
+#eve.fullfg.eval.munged
 %.munged: %.chunked scripts/mungeChunkedCHILDES.py
 	python $(word 2,$^) $< > $@
 
@@ -165,30 +159,26 @@ genmodel/chunker: scripts/buildChunker.py
 	cat $< | sed '/^$$/d;' | grep -v '^(\([^N][^\)]*\))*(\(V[^\)]*\))(\([^V][^\)]*\))*$$' > $@
 
 .PRECIOUS: %.model
-#foo/eve.--extract-subject_--extract-object.model
+#eve.--extract-subject_--extract-object.model
 .PRECIOUS: %.output
 %.output %.model: $$(basename %).munged scripts/acquireFG.py
 	python $(word 2,$^) $(subst _, ,$(subst .,,$(suffix $*))) --input $< --model $*.model > $*.output
 
-#.PRECIOUS: %.tested
-#%.tested: scripts/testFG.py %.model %.eval.munged
-#	python $< $(word 2,$^) $(word 3,$^) > $@
-
 .PRECIOUS: %.tested
-#foo/eve.--extract-subject_--extract-object.tested
+#eve.--extract-subject_--extract-object.tested
 %.tested: scripts/testFG.py %.model $$(basename %).eval.munged
 	python $< $(word 2,$^) $(word 3,$^) > $@
 
-#foo/eve.--extract-subject_--extract-object.fullfg.tested
+#eve.--extract-subject_--extract-object.fullfg.tested
 %.tested: scripts/testFG.py  $$(basename %).model $$(basename $$(basename %))$$(suffix $$*).eval.munged
 	python $< $(word 2,$^) $(word 3,$^) > $@
 
 .PRECIOUS: %.evalled
 # %.sents must be the gold annotated sents
-#foo/eve.--extract-subject_--extract-object.--collapsed.evalled
+#eve.--extract-subject_--extract-object.--collapsed.evalled
 %.evalled: scripts/evalFG.py $$(basename %).tested $$(basename $$(basename %)).eval.sents
 	python $< $(subst .,,$(suffix $*)) $(word 2,$^) $(word 3,$^) > $@
 
-#foo/eve.--extract-subject_--extract-object.fullfg.--collapsed.evalled
+#eve.--extract-subject_--extract-object.fullfg.--collapsed.evalled
 %.evalled: scripts/evalFG.py $$(basename %).tested $$(basename $$(basename $$(basename %)))$$(suffix $$(basename %)).eval.sents
 	python $< $(subst .,,$(suffix $*)) $(word 2,$^) $(word 3,$^) > $@

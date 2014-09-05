@@ -4,6 +4,12 @@
 #outputFile: an empty file to store the model's interpretation of trainFile
 #modelFile: an empty file to store the pickled model (to avoid resampling every time)
 
+#OPTS:
+# --noprior: don't impose a prior on the distributions
+# --extract-subject: have a high and a low subject gaussian (rather than just a low subject gaussian)
+# --extract-object: have a high and a low object gaussian (rather than just a low object gaussian)
+# --iters N: set maximum number of iterations until convergence (default: 20)
+
 # bug when final word of sentence is verb; makes final word a noun and penultimate a verb.
 #  This causes a post-verbal object to nearly always exist.
 
@@ -24,7 +30,7 @@ for aix in range(1,len(sys.argv)):
   if len(sys.argv[aix]) < 2 or sys.argv[aix][:2] != '--':
     #filename or malformed arg
     continue
-  elif aix < len(sys.argv) - 1 and len(sys.argv[aix+1]) > 2 and sys.argv[aix+1][:2] == '--':
+  elif (aix < len(sys.argv) - 1 and len(sys.argv[aix+1]) > 2 and sys.argv[aix+1][:2] == '--') or aix == len(sys.argv)-1:
     #missing filename
     OPTS[sys.argv[aix][2:]] = True
     continue
@@ -51,10 +57,10 @@ THAT = True #Should That relativizers be tracked?
 THET = False #use 'thet' as a functional 'that'
 
 SUBJ_EXTRACT = False 
-if 'extract-subj' in OPTS:
+if 'extract-subject' in OPTS:
   SUBJ_EXTRACT = True #allows subjects to extract; otherwise, there is only one subject gaussian
 OBJ_EXTRACT = False 
-if 'extract-obj' in OPTS:
+if 'extract-object' in OPTS:
   OBJ_EXTRACT = True #allows objects to extract; otherwise, there is only one object gaussian 
 IOBJ = False #assumes learners already have an indirect object distribution
 IOBJ_EXTRACT = False #allows learners to extract IOBJ
