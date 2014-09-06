@@ -7,14 +7,24 @@ This code was designed for research rather than general use, so there are some t
     CHILDES (and BabySRL annotations)  
     megam
   
-#### Python packages:  
-    nltk   
+#### Python (2.7) packages:  
+    ast
+    nltk (with the following sub-package)
+        punkt
     numpy  
     scipy
 
-## Edits
-  Before running the code, you'll need to update `scripts/buildChunker.py` and `scripts/chunkCHILDES.py`  
+## Edits  
+Before running the code, you'll need to update `scripts/buildChunker.py` and `scripts/chunkCHILDES.py`  
+
     Replace '/home/compling/megam' with your location for megam
+    
+Run the following set of commands to get the nltk sub-package(s) if you don't have them:  
+
+    python  
+    nltk.download()  
+    d #Download  
+    punkt  
   
   If you just want to replicate the results of van Schijndel and Elsner (2014), just run: `make acl2014`  
   
