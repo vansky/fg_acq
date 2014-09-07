@@ -167,18 +167,18 @@ genmodel/chunker: scripts/buildChunker.py
 .PRECIOUS: %.tested
 #eve.--extract-subject_--extract-object.tested
 %.tested: scripts/testFG.py %.model $$(basename %).eval.munged
-	python $< $(word 2,$^) $(word 3,$^) > $@
+	python $< $(word 2,$^) $(word 3,$^) | sed 's/can not/cannot/g' > $@
 
 #eve.--extract-subject_--extract-object.fullfg.tested
 %.tested: scripts/testFG.py  $$(basename %).model $$(basename $$(basename %))$$(suffix $$*).eval.munged
-	python $< $(word 2,$^) $(word 3,$^) > $@
+	python $< $(word 2,$^) $(word 3,$^) | sed 's/can not/cannot/g' > $@
 
 .PRECIOUS: %.evalled
 # %.sents must be the gold annotated sents
+#eve.--extract-subject_--extract-object.fullfg.--collapsed.evalled
+%.evalled: scripts/evalFG.py $$(basename %).tested $$(basename $$(basename $$(basename %)))$$(suffix $$(basename $$*)).eval.sents
+	python $< $(subst .,,$(suffix $*)) --test $(word 2,$^) --gold $(word 3,$^) > $@
+
 #eve.--extract-subject_--extract-object.--collapsed.evalled
 %.evalled: scripts/evalFG.py $$(basename %).tested $$(basename $$(basename %)).eval.sents
-	python $< $(subst .,,$(suffix $*)) $(word 2,$^) $(word 3,$^) > $@
-
-#eve.--extract-subject_--extract-object.fullfg.--collapsed.evalled
-%.evalled: scripts/evalFG.py $$(basename %).tested $$(basename $$(basename $$(basename %)))$$(suffix $$(basename %)).eval.sents
-	python $< $(subst .,,$(suffix $*)) $(word 2,$^) $(word 3,$^) > $@
+	python $< $(subst .,,$(suffix $*)) --test $(word 2,$^) --gold $(word 3,$^) > $@

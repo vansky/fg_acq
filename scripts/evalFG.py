@@ -1,17 +1,31 @@
-#python evalFG.py testFile goldFile > outputFile
+#python evalFG.py [--collapsed] --test testFile --gold goldFile > outputFile
 
 #testFile: output from scripts/testFG.py
 #goldFile: a file with gold labellings to eval against
+#
+#OPTS:
+#  --collapsed: evals against collapsed arg labels (labels >= 1 := 1)
 
 from __future__ import division
 import sys
 import string
 import ast
 
+OPTS = {}
+for aix in range(1,len(sys.argv)):
+  if len(sys.argv[aix]) < 2 or sys.argv[aix][:2] != '--':
+    #filename or malformed arg
+    continue
+  elif (aix < len(sys.argv) - 1 and len(sys.argv[aix+1]) > 2 and sys.argv[aix+1][:2] == '--') or aix == len(sys.argv)-1:
+    #missing filename
+    OPTS[sys.argv[aix][2:]] = True
+    continue
+  else:
+    OPTS[sys.argv[aix][2:]] = sys.argv[aix+1]
+
 COLLAPSE_OBJ = False
-if sys.argv[1][0] == '-':
-  if sys.argv[1][1:] == 'collapsed':
-    COLLAPSE_OBJ = True
+if 'collapsed' in OPTS:
+  COLLAPSE_OBJ = True
     
 THET = False
 wfuncwords = ['who','what','which']
@@ -66,7 +80,7 @@ def parseLine(line):
 #########################
 
 testCorpus = []
-testFile = open(sys.argv[1],'r')
+testFile = open(OPTS['test'],'r')
 
 for line in testFile.readlines():
   testSent = []
@@ -82,7 +96,7 @@ testFile.close()
 #########################
 
 goldCorpus = []
-goldFile = open(sys.argv[2],'r')
+goldFile = open(OPTS['gold'],'r')
 
 for line in goldFile.readlines():
   goldSent = []
@@ -130,33 +144,43 @@ for i,ts in enumerate(testCorpus):
   THAT = False
   WH = False
   TRANS = False
-  #sys.stdout.write('ts: '+str(ts)+'\n'+'gold: '+str(goldCorpus[i])+'\n')
+  gmod = 0 #mod-counter to align gold and test sentences
+#  sys.stderr.write('ts: '+str(ts)+'\n'+'gold: '+str(goldCorpus[i])+'\n')
   for j,tw in enumerate(ts):
-    if type(goldCorpus[i][j]) == type(()):
-      if goldCorpus[i][j][0] in tfuncwords:
+    if type(tw) == type(()):
+      testword = tw[-1]
+    else:
+      testword = tw
+
+    while (type(goldCorpus[i][j+gmod]) == type(()) and testword != goldCorpus[i][j+gmod][0]) or \
+          (type(goldCorpus[i][j+gmod]) != type(()) and testword != goldCorpus[i][j+gmod]):
+      #sys.stderr.write(str(tw)+'?='+str(goldCorpus[i][j+gmod])+' i: '+str(i)+'/'+str(len(goldCorpus))+' j: '+str(j+gmod)+'/'+str(len(goldCorpus[i]))+'\n')
+      gmod += 1 #keep gold and test in sync
+    if type(goldCorpus[i][j+gmod]) == type(()):
+      if goldCorpus[i][j+gmod][0] in tfuncwords:
         THAT = True
-      elif goldCorpus[i][j][0] in wfuncwords:
+      elif goldCorpus[i][j+gmod][0] in wfuncwords:
         WH = True
     else:
-      if goldCorpus[i][j] in tfuncwords:
+      if goldCorpus[i][j+gmod] in tfuncwords:
         THAT = True
-      elif goldCorpus[i][j] in wfuncwords:
+      elif goldCorpus[i][j+gmod] in wfuncwords:
         WH = True
 
     if type(tw) == type(()) and type(tw[0]) != type(1):
       #hit
       lprecision[1] += 1
-      if type(goldCorpus[i][j]) == type(()):
+      if type(goldCorpus[i][j+gmod]) == type(()):
         #possible true hit
         lrecall[1] += 1
-        if first == "" and goldCorpus[i][j][-1] != 'V':
-          first = goldCorpus[i][j][-1]
-        if goldCorpus[i][j][-1] == 1:
+        if first == "" and goldCorpus[i][j+gmod][-1] != 'V':
+          first = goldCorpus[i][j+gmod][-1]
+        if goldCorpus[i][j+gmod][-1] == 1:
           TRANS = True
-        elif goldCorpus[i][j][-1] == 0:
+        elif goldCorpus[i][j+gmod][-1] == 0:
           arecall[1] = 1
 
-        if goldCorpus[i][j][-1] == 'V':
+        if goldCorpus[i][j+gmod][-1] == 'V':
           #verbs don't count against us
           lrecall[1] -= 1
           if tw[0] == 'V' or tw[0][0] == 'F':
@@ -165,13 +189,13 @@ for i,ts in enumerate(testCorpus):
         elif tw[0] == 'V' or tw[0][0] == 'F':
           #verbs don't count for or against us
           lprecision[1] -= 1
-        elif tw[0][0] == goldCorpus[i][j][-1]:
+        elif tw[0][0] == goldCorpus[i][j+gmod][-1]:
           #true hit
           lprecision[0] += 1
           lrecall[0] += 1
           if tw[0][0] == 0:
             arecall[0] = 1
-        elif COLLAPSE_OBJ and goldCorpus[i][j][-1] >= 1 and tw[0][0] == 1:
+        elif COLLAPSE_OBJ and goldCorpus[i][j+gmod][-1] >= 1 and tw[0][0] == 1:
           #collapsed arg true hit
           lprecision[0] += 1
           lrecall[0] += 1
@@ -182,43 +206,43 @@ for i,ts in enumerate(testCorpus):
         #function words aren't silver annotated, so don't eval those
         # they are indirectly being evaluated since they modify the other arg labels
         lprecision[1] -= 1
-        if goldCorpus[i][j][-1] == 1:
+        if goldCorpus[i][j+gmod][-1] == 1:
           TRANS = True
 
-        if goldCorpus[i][j] in tfuncwords:
+        if goldCorpus[i][j+gmod] in tfuncwords:
           func['T'] += 1
-        elif goldCorpus[i][j] in wfuncwords:
+        elif goldCorpus[i][j+gmod] in wfuncwords:
           func['W'] += 1
-        elif goldCorpus[i][j][-1] == 0:
+        elif goldCorpus[i][j+gmod][-1] == 0:
           arecall[1] = 1
       else:
         #false hit
-        if goldCorpus[i][j][-1] == 1:
+        if goldCorpus[i][j+gmod][-1] == 1:
           TRANS = True
 
-        if goldCorpus[i][j] in tfuncwords:
+        if goldCorpus[i][j+gmod] in tfuncwords:
           func['T'] += 1
-        elif goldCorpus[i][j] in wfuncwords:
+        elif goldCorpus[i][j+gmod] in wfuncwords:
           func['W'] += 1
-        elif goldCorpus[i][j][-1] == 0:
+        elif goldCorpus[i][j+gmod][-1] == 0:
           arecall[1] = 1
     else:
       #possible miss
-      if type(goldCorpus[i][j]) == type(()) and goldCorpus[i][j][-1] != 'V':
+      if type(goldCorpus[i][j+gmod]) == type(()) and goldCorpus[i][j+gmod][-1] != 'V':
         #false negative (don't penalize for unlabelled verbs...)
         if first == "":
-          first = goldCorpus[i][j][-1]
+          first = goldCorpus[i][j+gmod][-1]
         lrecall[1] += 1
 
-        if goldCorpus[i][j][-1] == 1:
+        if goldCorpus[i][j+gmod][-1] == 1:
           TRANS = True
-        elif goldCorpus[i][j][-1] == 0:
+        elif goldCorpus[i][j+gmod][-1] == 0:
           arecall[1] = 1
       else:
         #true negative
-        if goldCorpus[i][j] in tfuncwords:
+        if goldCorpus[i][j+gmod] in tfuncwords:
           func['T'] += 1
-        elif goldCorpus[i][j] in wfuncwords:
+        elif goldCorpus[i][j+gmod] in wfuncwords:
           func['W'] += 1
 #  sys.stdout.write('P: '+str(lprecision)+' R: '+str(lrecall)+'\n')
 #  sys.stdout.write(str(func)+'\n')
