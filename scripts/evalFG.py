@@ -152,10 +152,12 @@ for i,ts in enumerate(testCorpus):
     else:
       testword = tw
 
-    while (type(goldCorpus[i][j+gmod]) == type(()) and testword != goldCorpus[i][j+gmod][0]) or \
+    while (type(goldCorpus[i][j+gmod]) == type(()) and testword != goldCorpus[i][j+gmod][0].strip("'")) or \
           (type(goldCorpus[i][j+gmod]) != type(()) and testword != goldCorpus[i][j+gmod]):
-      #sys.stderr.write(str(tw)+'?='+str(goldCorpus[i][j+gmod])+' i: '+str(i)+'/'+str(len(goldCorpus))+' j: '+str(j+gmod)+'/'+str(len(goldCorpus[i]))+'\n')
+#      sys.stderr.write(str(tw)+'?='+str(goldCorpus[i][j+gmod])+' i: '+str(i)+'/'+str(len(goldCorpus))+' j: '+str(j+gmod)+'/'+str(len(goldCorpus[i]))+'\n')
       gmod += 1 #keep gold and test in sync
+      if testword == 'cannot' and goldCorpus[i][j+gmod-1] == 'can' and goldCorpus[i][j+gmod] == 'not':
+        break #standardize 'cannot' across both the test and gold corpora
     if type(goldCorpus[i][j+gmod]) == type(()):
       if goldCorpus[i][j+gmod][0] in tfuncwords:
         THAT = True

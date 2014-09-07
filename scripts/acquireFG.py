@@ -402,6 +402,8 @@ def calcpost(dists,corpus,learnrate,skip_penalty,variable_var=True,runIters=10,p
 
   run0 = time.clock()
   inCorpus = corpus
+  if runIters == 0:
+    outCorpus = inCorpus
   for iteration in range(runIters):
     outCorpus = []
     newIn = []
@@ -565,8 +567,6 @@ else:
 
 sys.stderr.write('Loading training corpus\n')
 
-A = []
-
 Corpus = []
 
 SEENV = False #a boolean denoting whether the verb has been seen or not
@@ -625,6 +625,9 @@ trainFile.close()
 #########################
 
 if PARAMSEARCH:
+  if runIters == 0:
+    #you can't do a parameter search when iters is 0
+    raise
   sys.stdout.write('Initiating exploration of parameter space\n')
   count = 0
 
@@ -643,24 +646,25 @@ else:
   distlist = initdists([-1*SO_offset,SO_offset,2*SO_offset,0],slim_var,wide_var)
   sys.stdout.write('InitDistlist: '+str(distlist)+'\n')
 
-  if TIMING:
-    pr = cProfile.Profile()
-#    cProfile.run('initdists([-1*pos_offset,pos_offset,2*pos_offset,0],stddev_narrow,stddev_wide)')
-    pr.enable()
-  if PROGRESS:
-    random.seed()
-    distlist,outCorpus = calcpost(initdists([-1*SO_offset,SO_offset,2*SO_offset,0],slim_var,wide_var),Corpus,learnrate,skip_penalty,variable_var,runIters,progressCorpus)
-    sys.stdout.write('PROGRESSION:\n')
-    for i in progressCorpus:
-      sys.stdout.write(str(i)+'\n')
-    sys.stdout.write('RESULTS:\n')
-  else:
-    distlist,outCorpus = calcpost(initdists([-1*SO_offset,SO_offset,2*SO_offset,0],slim_var,wide_var),Corpus,learnrate,skip_penalty,variable_var,runIters)
-  if TIMING:
-    pr.disable()
-    #s = StringIO.StringIO
-    ps = pstats.Stats(pr).sort_stats('cumulative')
-    ps.print_stats(10)
+  if runIters > 0:
+    if TIMING:
+      pr = cProfile.Profile()
+#      cProfile.run('initdists([-1*pos_offset,pos_offset,2*pos_offset,0],stddev_narrow,stddev_wide)')
+      pr.enable()
+    if PROGRESS:
+      random.seed()
+      distlist,outCorpus = calcpost(initdists([-1*SO_offset,SO_offset,2*SO_offset,0],slim_var,wide_var),Corpus,learnrate,skip_penalty,variable_var,runIters,progressCorpus)
+      sys.stdout.write('PROGRESSION:\n')
+      for i in progressCorpus:
+        sys.stdout.write(str(i)+'\n')
+      sys.stdout.write('RESULTS:\n')
+    else:
+      distlist,outCorpus = calcpost(initdists([-1*SO_offset,SO_offset,2*SO_offset,0],slim_var,wide_var),Corpus,learnrate,skip_penalty,variable_var,runIters)
+    if TIMING:
+      pr.disable()
+      #s = StringIO.StringIO
+      ps = pstats.Stats(pr).sort_stats('cumulative')
+      ps.print_stats(10)
   sys.stdout.write('FinDistlist: '+str(distlist)+'\n')
 
 #########################
@@ -669,7 +673,7 @@ else:
 #
 #########################
 
-if not PARAMSEARCH:
+if not PARAMSEARCH and runIters > 0:
   sys.stderr.write('Outputting training interpretation\n')
 
   sys.stdout.write('Distributions: '+str(distlist)+'\n')
@@ -697,7 +701,6 @@ sys.stderr.write('Outputting inferred model\n')
 modelFile = open(OPTS['model'],'wb')
 
 model = {}
-model['A'] = A
 model['distlist'] = distlist
 
 pickle.dump(model,modelFile)
