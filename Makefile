@@ -46,15 +46,15 @@ acl2014: #Replicates van Schijndel and Elsner (2014)
 	make acl_eval1_so/eve.--extract-subject_--extract-object.fullfg.--collapsed.evalled
 	make acl_eval1_so/adam.--extract-subject_--extract-object.fullfg.--uncollapsed.evalled
 	make acl_eval1_so/adam.--extract-subject_--extract-object.fullfg.--collapsed.evalled
-	cp -r acl_eval1_so{,_noimp}
+	cp -r acl_eval1_so acl_eval1_so_noimp
 	make acl_eval1_so_noimp/eve.eval.noimpmunged
 	make acl_eval1_so_noimp/adam.eval.noimpmunged
 	make acl_eval1_so_noimp/eve.fullfg.eval.noimpmunged
 	make acl_eval1_so_noimp/adam.fullfg.eval.noimpmunged
-	mv acl_eval1_so_noimp/eve.eval.{noimp,}munged
-	mv acl_eval1_so_noimp/adam.eval.{noimp,}munged
-	mv acl_eval1_so_noimp/eve.fullfg.eval.{noimp,}munged
-	mv acl_eval1_so_noimp/adam.fullfg.eval.{noimp,}munged
+	mv acl_eval1_so_noimp/eve.eval.noimpmunged acl_eval1_so_noimp/eve.eval.munged
+	mv acl_eval1_so_noimp/adam.eval.noimpmunged acl_eval1_so_noimp/adam.eval.munged
+	mv acl_eval1_so_noimp/eve.fullfg.eval.noimpmunged acl_eval1_so_noimp/eve.fullfg.eval.munged
+	mv acl_eval1_so_noimp/adam.fullfg.eval.noimpmunged acl_eval1_so_noimp/adam.fullfg.eval.munged
 	make acl_eval1_so/eve.--extract-subject_--extract-object.--uncollapsed.evalled
 	make acl_eval1_so/eve.--extract-subject_--extract-object.--collapsed.evalled
 	make acl_eval1_so/adam.--extract-subject_--extract-object.--uncollapsed.evalled
