@@ -66,12 +66,21 @@ for line in origFile.readlines():
   for e in sline:
     if len(e) == 0:
       continue
-    if e[0] == ' ':
-      sent += processNonNP(e)
-    if e[0] == 'S':
-      sent += processNonNP(e[1:])
-    elif e[0] == 'N':
+    if e[0] == 'N': #If a noun chunk:
       sent += processNP(e)
+    #Otherwise, split this chunk based on spaces
+      #and go through the subchunks
+    else:
+      for sube in e.split():
+        if sube =='S':
+          #ignore beginning of sentence
+          continue
+        else:
+          sent += processNonNP(sube)
+#    if e[0] == ' ':
+#      sent += processNonNP(e)
+#    if e[0] == 'S':
+#      sent += processNonNP(e[1:])
 
 origFile.close()
 

@@ -134,7 +134,8 @@ genmodel/chunker: scripts/buildChunker.py
 #eve.chunked
 #eve.fullfg.eval.chunked
 %.chunked: %.sents scripts/chunkCHILDES.py genmodel/chunker
-	python $(word 2,$^) $< $(word 3,$^) | tail -n +2 | perl -pe "s/\(NP yes\/NNS\)/yes\/OH/g;" > $@
+	python $(word 2,$^) $< $(word 3,$^) | perl -pe "s/\(NP yes\/NNS\)/yes\/OH/g;" > $@
+	#python $(word 2,$^) $< $(word 3,$^) | tail -n +2 | perl -pe "s/\(NP yes\/NNS\)/yes\/OH/g;" > $@
 
 #.PRECIOUS: %.oracle.eval.chunked
 #%.oracle.eval.chunked: %.eval.sents scripts/oracleChunkCHILDES.py

@@ -2,7 +2,7 @@
 
 #testFile: NP-chunked sentences
 #outputFile: an empty file to store the model's interpretation of testFile
-#modelFile: an empty file to store the pickled model (to avoid resampling every time
+#modelFile: an empty file to store the pickled model (to avoid resampling every time)
 
 from __future__ import division
 import sys

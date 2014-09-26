@@ -145,7 +145,11 @@ for i,ts in enumerate(testCorpus):
   WH = False
   TRANS = False
   gmod = 0 #mod-counter to align gold and test sentences
-#  sys.stderr.write('ts: '+str(ts)+'\n'+'gold: '+str(goldCorpus[i])+'\n')
+
+  ### DEBUG
+  #sys.stderr.write('ts: '+str(ts)+'\n'+'gold: '+str(goldCorpus[i])+'\n')
+  ### \DEBUG
+  
   for j,tw in enumerate(ts):
     if type(tw) == type(()):
       testword = tw[-1]
@@ -154,7 +158,10 @@ for i,ts in enumerate(testCorpus):
 
     while (type(goldCorpus[i][j+gmod]) == type(()) and testword != goldCorpus[i][j+gmod][0].strip("'")) or \
           (type(goldCorpus[i][j+gmod]) != type(()) and testword != goldCorpus[i][j+gmod]):
-#      sys.stderr.write(str(tw)+'?='+str(goldCorpus[i][j+gmod])+' i: '+str(i)+'/'+str(len(goldCorpus))+' j: '+str(j+gmod)+'/'+str(len(goldCorpus[i]))+'\n')
+      ### DEBUG
+      #sys.stderr.write(str(tw)+'?='+str(goldCorpus[i][j+gmod])+' i: '+str(i)+'/'+str(len(goldCorpus))+' j: '+str(j+gmod)+'/'+str(len(goldCorpus[i]))+'\n')
+      ###\DEBUG
+      
       gmod += 1 #keep gold and test in sync
       if testword == 'cannot' and goldCorpus[i][j+gmod-1] == 'can' and goldCorpus[i][j+gmod] == 'not':
         break #standardize 'cannot' across both the test and gold corpora
