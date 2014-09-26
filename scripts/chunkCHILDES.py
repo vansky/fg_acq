@@ -4,7 +4,7 @@ import nltk
 import pickle
 from nltk.chunk.util import conlltags2tree
 
-nltk.config_megam('/home/compling/megam/')
+#nltk.config_megam('/home/compling/megam_64-bit/megam-64.opt')
 
 testix = 1
 modelix = 2
@@ -20,7 +20,7 @@ class ConsecutiveNPChunkTagger(nltk.TaggerI):
                 train_set.append( (featureset, tag) )
                 history.append(tag)
         self.classifier = nltk.MaxentClassifier.train(
-            train_set, algorithm='megam', trace=0)
+            train_set, algorithm='iis', trace=0) #megam', trace=0)
 
     def tag(self, sentence):
         history = []
