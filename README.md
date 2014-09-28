@@ -5,7 +5,6 @@ This code was designed for research rather than general use, so there are some t
 
 ## Requirements  
     CHILDES (and BabySRL annotations)  
-    megam
   
 #### Python (2.7) packages:  
     ast
@@ -14,11 +13,6 @@ This code was designed for research rather than general use, so there are some t
     numpy  
     scipy
 
-## Edits  
-Before running the code, you'll need to update `scripts/buildChunker.py` and `scripts/chunkCHILDES.py`  
-
-    Replace '/home/compling/megam' with your location for megam
-    
 Run the following set of commands to get the nltk sub-package(s) if you don't have them:  
 
     python  
